@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class FluxFactoryMethods {
+public class FluxFactoryMethodsTest {
 
     private List<String> names = Arrays.asList("adam", "anna", "jack", "jenny");
 
