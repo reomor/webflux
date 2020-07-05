@@ -21,9 +21,8 @@ public class FluxController {
         value = "/fluxstream",
         produces = MediaType.APPLICATION_STREAM_JSON_VALUE
     )
-    public Flux<Integer> getFluxStream() {
-        return Flux.just(1, 2, 3, 4)
-            .delayElements(Duration.ofSeconds(2))
+    public Flux<Long> getFluxStream() {
+        return Flux.interval(Duration.ofSeconds(1))
             .log();
     }
 }

@@ -76,4 +76,23 @@ class FluxControllerTest {
             .expectBodyList(Integer.class)
             .consumeWith(listEntityExchangeResult -> assertEquals(expected, listEntityExchangeResult.getResponseBody()));
     }
+
+    @Test
+    public void fluxInfiniteStream() {
+        Flux<Long> longFlux = webTestClient.get()
+            .uri("/fluxstream")
+            .accept(MediaType.APPLICATION_STREAM_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .returnResult(Long.class)
+            .getResponseBody();
+
+        StepVerifier.create(longFlux.log())
+            .expectNext(0L)
+            .expectNext(1L)
+            .expectNext(2L)
+            .thenCancel()
+            .verify();
+    }
 }
