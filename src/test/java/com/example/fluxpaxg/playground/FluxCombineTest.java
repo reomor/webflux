@@ -3,7 +3,7 @@ package com.example.fluxpaxg.playground;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
-import reactor.util.function.Tuple2;
+import reactor.test.scheduler.VirtualTimeScheduler;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -26,7 +26,8 @@ public class FluxCombineTest {
     public void fluxCombineMergeWithDelay() {
         Flux<String> stringFlux1 = Flux.fromIterable(Arrays.asList("A", "B", "C"))
             .delayElements(Duration.ofSeconds(1));
-        Flux<String> stringFlux2 = Flux.fromIterable(Arrays.asList("D", "E"));
+        Flux<String> stringFlux2 = Flux.fromIterable(Arrays.asList("D", "E"))
+            .delayElements(Duration.ofSeconds(1));;
         Flux<String> merge = Flux.merge(stringFlux1, stringFlux2);
 
         StepVerifier.create(merge.log())
@@ -40,13 +41,35 @@ public class FluxCombineTest {
     public void fluxCombineConcat() {
         Flux<String> stringFlux1 = Flux.fromIterable(Arrays.asList("A", "B", "C"))
             .delayElements(Duration.ofSeconds(1));
-        Flux<String> stringFlux2 = Flux.fromIterable(Arrays.asList("D", "E"));
+        Flux<String> stringFlux2 = Flux.fromIterable(Arrays.asList("D", "E"))
+            .delayElements(Duration.ofSeconds(1));
         Flux<String> concat = Flux.concat(stringFlux1, stringFlux2);
 
         StepVerifier.create(concat.log())
             .expectSubscription()
             .expectNext("A", "B", "C", "D", "E")
             .verifyComplete();
+    }
+
+    @Test
+    public void fluxCombineConcatVirtualTime() {
+        VirtualTimeScheduler.getOrSet();
+        Flux<String> stringFlux1 = Flux.fromIterable(Arrays.asList("A", "B", "C"))
+            .delayElements(Duration.ofSeconds(1));
+        Flux<String> stringFlux2 = Flux.fromIterable(Arrays.asList("D", "E"))
+            .delayElements(Duration.ofSeconds(1));
+        Flux<String> concat = Flux.concat(stringFlux1, stringFlux2);
+
+        StepVerifier.withVirtualTime(() -> concat.log())
+            .expectSubscription()
+            .thenAwait(Duration.ofSeconds(5))
+            .expectNext("A", "B", "C", "D", "E")
+            .verifyComplete();
+
+//        StepVerifier.create(concat.log())
+//            .expectSubscription()
+//            .expectNext("A", "B", "C", "D", "E")
+//            .verifyComplete();
     }
 
     @Test
