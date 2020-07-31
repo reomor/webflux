@@ -12,8 +12,8 @@ import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DirtiesContext
 @SpringBootTest
+@DirtiesContext
 @AutoConfigureWebTestClient
 class SampleHandlerTest {
 
