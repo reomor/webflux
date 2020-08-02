@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,13 @@ public class ItemController {
         this.itemReactiveRepository = itemReactiveRepository;
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException exception) {
+        log.error("Exception caught: " + exception);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(exception.getMessage());
+    }
+
     @GetMapping(ITEM_ALL_V1)
     public Flux<Item> getAllItems() {
         return itemReactiveRepository.findAll();
@@ -40,6 +48,12 @@ public class ItemController {
         return itemReactiveRepository.findById(id)
             .map(item -> new ResponseEntity<>(item, HttpStatus.OK))
             .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(ITEM_ALL_V1 + "/runtimeException")
+    public Flux<Item> getAllItemsWithRuntimeException() {
+        return itemReactiveRepository.findAll()
+            .concatWith(Mono.error(new RuntimeException("Runtime exception raised")));
     }
 
     @PostMapping(ITEM_ALL_V1)
