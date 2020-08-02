@@ -131,4 +131,14 @@ class ItemHandlerTest {
             .expectStatus()
             .isNotFound();
     }
+
+    @Test
+    void getRuntimeException() {
+        webTestClient.get()
+            .uri("/v1/func/exception/runtime")
+            .exchange()
+            .expectStatus().is5xxServerError()
+            .expectBody(String.class)
+            .isEqualTo("Runtime Exception functional");
+    }
 }

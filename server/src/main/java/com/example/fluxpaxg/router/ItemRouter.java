@@ -35,11 +35,20 @@ public class ItemRouter {
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::createItem
         ).andRoute(DELETE(ITEM_ALL_V1_FUNCTIONAL.concat(ID))
-            .and(accept(MediaType.APPLICATION_JSON)),
+                .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::deleteItem
         ).andRoute(PUT(ITEM_ALL_V1_FUNCTIONAL.concat(ID))
-            .and(accept(MediaType.APPLICATION_JSON)),
+                .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::updateItem
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> exceptionRoute(ItemHandler itemHandler) {
+        return RouterFunctions.route(
+            GET("/v1/func/exception/runtime")
+                .and(accept(MediaType.APPLICATION_JSON)),
+            itemHandler::runtimeException
         );
     }
 }

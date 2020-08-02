@@ -57,4 +57,8 @@ public class ItemHandler {
                     })
             ).switchIfEmpty(ServerResponse.notFound().build());
     }
+
+    public Mono<ServerResponse> runtimeException(ServerRequest request) {
+        throw new RuntimeException("Runtime Exception functional");
+    }
 }
