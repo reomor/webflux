@@ -1,6 +1,8 @@
 package fluxpaxg.controller;
 
 import fluxpaxg.domain.Item;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RestController
 public class ItemClientController {
 
@@ -81,5 +84,35 @@ public class ItemClientController {
             .retrieve()
             .bodyToMono(Void.class)
             .log("Delete:");
+    }
+
+    @GetMapping("/client/items/error")
+    public Flux<Item> exceptionRetrieve() {
+        return webClient.get()
+            .uri("/v1/items/runtimeException")
+            .retrieve()
+            .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
+                Mono<String> stringMono = clientResponse.bodyToMono(String.class);
+                return stringMono.flatMap(errorMessage -> {
+                    log.error("Got error: {}", errorMessage);
+                    throw new RuntimeException(errorMessage);
+                });
+            }).bodyToFlux(Item.class);
+    }
+
+    public Flux<Item> exceptionExchange() {
+        return webClient.get()
+            .uri("/v1/items/runtimeException")
+            .exchange()
+            .flatMapMany(clientResponse -> {
+                if (clientResponse.statusCode().is5xxServerError()) {
+                    return clientResponse.bodyToMono(String.class)
+                        .flatMap(errorMessage -> {
+                            log.error("Got error: {}", errorMessage);
+                            throw new RuntimeException(errorMessage);
+                        });
+                }
+                return clientResponse.bodyToMono(Item.class);
+            });
     }
 }
