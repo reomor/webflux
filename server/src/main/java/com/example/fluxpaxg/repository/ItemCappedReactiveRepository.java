@@ -10,5 +10,5 @@ import reactor.core.publisher.Flux;
 public interface ItemCappedReactiveRepository extends ReactiveMongoRepository<ItemCapped, String> {
 
     @Tailable
-    Flux<ItemCapped> findItemCappedsBy();
+    Flux<ItemCapped> findItemBy();
 }

@@ -1,6 +1,8 @@
 package com.example.fluxpaxg.handlers;
 
 import com.example.fluxpaxg.docs.Item;
+import com.example.fluxpaxg.docs.ItemCapped;
+import com.example.fluxpaxg.repository.ItemCappedReactiveRepository;
 import com.example.fluxpaxg.repository.ItemReactiveRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import reactor.core.publisher.Mono;
 public class ItemHandler {
 
     private final ItemReactiveRepository itemReactiveRepository;
+    private final ItemCappedReactiveRepository itemCappedReactiveRepository;
 
     public Mono<ServerResponse> getAllItems(ServerRequest request) {
         return ServerResponse.ok()
@@ -60,5 +63,11 @@ public class ItemHandler {
 
     public Mono<ServerResponse> runtimeException(ServerRequest request) {
         throw new RuntimeException("Runtime Exception functional");
+    }
+
+    public Mono<ServerResponse> itemStream(ServerRequest request) {
+        return ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_STREAM_JSON)
+            .body(itemCappedReactiveRepository.findItemBy(), ItemCapped.class);
     }
 }

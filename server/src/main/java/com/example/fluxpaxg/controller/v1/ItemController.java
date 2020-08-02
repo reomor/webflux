@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,7 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ItemController {
 
-    public static final String ITEM_ALL_V1 = "/v1/items";
+    public static final String ITEM_V1 = "/v1/items";
 
     private final ItemReactiveRepository itemReactiveRepository;
 
@@ -31,36 +30,36 @@ public class ItemController {
         this.itemReactiveRepository = itemReactiveRepository;
     }
 
-    @GetMapping(ITEM_ALL_V1)
+    @GetMapping(ITEM_V1)
     public Flux<Item> getAllItems() {
         return itemReactiveRepository.findAll();
     }
 
-    @GetMapping(ITEM_ALL_V1 + "/{id}")
+    @GetMapping(ITEM_V1 + "/{id}")
     public Mono<ResponseEntity<Item>> getItemById(@PathVariable String id) {
         return itemReactiveRepository.findById(id)
             .map(item -> new ResponseEntity<>(item, HttpStatus.OK))
             .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(ITEM_ALL_V1 + "/runtimeException")
+    @GetMapping(ITEM_V1 + "/runtimeException")
     public Flux<Item> getAllItemsWithRuntimeException() {
         return itemReactiveRepository.findAll()
             .concatWith(Mono.error(new RuntimeException("Runtime exception raised")));
     }
 
-    @PostMapping(ITEM_ALL_V1)
+    @PostMapping(ITEM_V1)
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Item> createItem(@RequestBody Item item) {
         return itemReactiveRepository.save(item);
     }
 
-    @DeleteMapping(ITEM_ALL_V1 + "/{id}")
+    @DeleteMapping(ITEM_V1 + "/{id}")
     public Mono<Void> deleteById(@PathVariable String id) {
         return itemReactiveRepository.deleteById(id);
     }
 
-    @PutMapping(ITEM_ALL_V1 + "/{id}")
+    @PutMapping(ITEM_V1 + "/{id}")
     public Mono<ResponseEntity<Item>> updateItem(
         @PathVariable String id,
         @RequestBody Item item

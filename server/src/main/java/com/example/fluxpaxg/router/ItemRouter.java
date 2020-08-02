@@ -17,27 +17,28 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class ItemRouter {
 
-    public static final String ITEM_ALL_V1_FUNCTIONAL = "/v1/func/items";
+    public static final String ITEM_V1_FUNCTIONAL = "/v1/func/items";
+    public static final String ITEM_STREAM_V1_FUNCTIONAL = "/v1/func/stream/items";
     public static final String ID = "/{id}";
 
     @Bean
     public RouterFunction<ServerResponse> itemRoute(ItemHandler itemHandler) {
         return RouterFunctions.route(
-            GET(ITEM_ALL_V1_FUNCTIONAL)
+            GET(ITEM_V1_FUNCTIONAL)
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::getAllItems
         ).andRoute(
-            GET(ITEM_ALL_V1_FUNCTIONAL.concat(ID))
+            GET(ITEM_V1_FUNCTIONAL.concat(ID))
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::getItemById
         ).andRoute(
-            POST(ITEM_ALL_V1_FUNCTIONAL)
+            POST(ITEM_V1_FUNCTIONAL)
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::createItem
-        ).andRoute(DELETE(ITEM_ALL_V1_FUNCTIONAL.concat(ID))
+        ).andRoute(DELETE(ITEM_V1_FUNCTIONAL.concat(ID))
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::deleteItem
-        ).andRoute(PUT(ITEM_ALL_V1_FUNCTIONAL.concat(ID))
+        ).andRoute(PUT(ITEM_V1_FUNCTIONAL.concat(ID))
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::updateItem
         );
@@ -49,6 +50,15 @@ public class ItemRouter {
             GET("/v1/func/exception/runtime")
                 .and(accept(MediaType.APPLICATION_JSON)),
             itemHandler::runtimeException
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> itemStreamRoute(ItemHandler itemHandler) {
+        return RouterFunctions.route(
+            GET(ITEM_STREAM_V1_FUNCTIONAL)
+                .and(accept(MediaType.APPLICATION_JSON)),
+            itemHandler::itemStream
         );
     }
 }

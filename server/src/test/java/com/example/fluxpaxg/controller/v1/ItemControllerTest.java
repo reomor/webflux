@@ -22,7 +22,7 @@ import reactor.test.StepVerifier;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.example.fluxpaxg.controller.v1.ItemController.ITEM_ALL_V1;
+import static com.example.fluxpaxg.controller.v1.ItemController.ITEM_V1;
 import static com.example.fluxpaxg.initialize.ItemDataInitializer.ITEM;
 import static com.example.fluxpaxg.initialize.ItemDataInitializer.ITEM_ID;
 
@@ -52,7 +52,7 @@ class ItemControllerTest {
     @Test
     void getAllItems() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1)
+            .uri(ITEM_V1)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +63,7 @@ class ItemControllerTest {
     @Test
     void getAllItems2() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1)
+            .uri(ITEM_V1)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ class ItemControllerTest {
     @Test
     void getAllItems3() {
         Flux<Item> itemFlux = webTestClient.get()
-            .uri(ITEM_ALL_V1)
+            .uri(ITEM_V1)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ class ItemControllerTest {
     @Test
     void getById() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1.concat("/{id}"), ITEM_ID)
+            .uri(ITEM_V1.concat("/{id}"), ITEM_ID)
             .exchange()
             .expectStatus().isOk()
             .expectBody()
@@ -103,7 +103,7 @@ class ItemControllerTest {
     @Test
     void getById_notFound() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1.concat("/{id}"), UUID.randomUUID().toString())
+            .uri(ITEM_V1.concat("/{id}"), UUID.randomUUID().toString())
             .exchange()
             .expectStatus().isNotFound();
     }
@@ -112,7 +112,7 @@ class ItemControllerTest {
     void createItem() {
         Item item = new Item(null, "Huawei", 299.99);
         webTestClient.post()
-            .uri(ITEM_ALL_V1)
+            .uri(ITEM_V1)
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(item), Item.class)
             .exchange()
@@ -126,7 +126,7 @@ class ItemControllerTest {
     @Test
     void deleteItemById() {
         webTestClient.delete()
-            .uri(ITEM_ALL_V1.concat("/{id}"), ITEM_ID)
+            .uri(ITEM_V1.concat("/{id}"), ITEM_ID)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
@@ -139,7 +139,7 @@ class ItemControllerTest {
         Item item = new Item(null, ITEM.getDescription(), newPrice);
 
         webTestClient.put()
-            .uri(ITEM_ALL_V1.concat("/{id}"), ITEM.getId())
+            .uri(ITEM_V1.concat("/{id}"), ITEM.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .body(Mono.just(item), Item.class)
@@ -154,7 +154,7 @@ class ItemControllerTest {
         double newPrice = 1111.1111;
         Item item = new Item(null, ITEM.getDescription(), newPrice);
         webTestClient.put()
-            .uri(ITEM_ALL_V1.concat("/{id}"), UUID.randomUUID().toString())
+            .uri(ITEM_V1.concat("/{id}"), UUID.randomUUID().toString())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .body(Mono.just(item), Item.class)
@@ -165,7 +165,7 @@ class ItemControllerTest {
     @Test
     void getItemsRuntimeException() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1.concat("/runtimeException"))
+            .uri(ITEM_V1.concat("/runtimeException"))
             .exchange()
             .expectStatus().is5xxServerError()
             .expectBody(String.class)

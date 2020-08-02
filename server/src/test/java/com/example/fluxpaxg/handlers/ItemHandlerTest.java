@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import static com.example.fluxpaxg.initialize.ItemDataInitializer.ITEM;
 import static com.example.fluxpaxg.initialize.ItemDataInitializer.ITEM_ID;
-import static com.example.fluxpaxg.router.ItemRouter.ITEM_ALL_V1_FUNCTIONAL;
+import static com.example.fluxpaxg.router.ItemRouter.ITEM_V1_FUNCTIONAL;
 
 @SpringBootTest
 @DirtiesContext
@@ -48,7 +48,7 @@ class ItemHandlerTest {
     @Test
     void getAllItems() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1_FUNCTIONAL)
+            .uri(ITEM_V1_FUNCTIONAL)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -60,7 +60,7 @@ class ItemHandlerTest {
     @Test
     void getItemById() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
+            .uri(ITEM_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -72,7 +72,7 @@ class ItemHandlerTest {
     @Test
     void getItemById_notFound() {
         webTestClient.get()
-            .uri(ITEM_ALL_V1_FUNCTIONAL.concat("/{id}"), UUID.randomUUID().toString())
+            .uri(ITEM_V1_FUNCTIONAL.concat("/{id}"), UUID.randomUUID().toString())
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -83,7 +83,7 @@ class ItemHandlerTest {
     void createItem() {
         var item = new Item(null, "New description", 1111.1111);
         webTestClient.post()
-            .uri(ITEM_ALL_V1_FUNCTIONAL)
+            .uri(ITEM_V1_FUNCTIONAL)
             .bodyValue(item)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
@@ -97,7 +97,7 @@ class ItemHandlerTest {
     @Test
     void deleteItem() {
         webTestClient.delete()
-            .uri(ITEM_ALL_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
+            .uri(ITEM_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -109,7 +109,7 @@ class ItemHandlerTest {
     void updateItem() {
         var item = new Item(null, ITEM.getDescription(), 1111.1111);
         webTestClient.put()
-            .uri(ITEM_ALL_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
+            .uri(ITEM_V1_FUNCTIONAL.concat("/{id}"), ITEM_ID)
             .bodyValue(item)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
@@ -124,7 +124,7 @@ class ItemHandlerTest {
     void updateItem_notFound() {
         var item = new Item(null, ITEM.getDescription(), 1111.1111);
         webTestClient.put()
-            .uri(ITEM_ALL_V1_FUNCTIONAL.concat("/{id}"), UUID.randomUUID().toString())
+            .uri(ITEM_V1_FUNCTIONAL.concat("/{id}"), UUID.randomUUID().toString())
             .bodyValue(item)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
